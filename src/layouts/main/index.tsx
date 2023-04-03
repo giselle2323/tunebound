@@ -11,6 +11,7 @@ import {
   UsersIcon,
   XIcon,
 } from "@heroicons/react/outline";
+import Tunebound from "../../images/tunebound.svg";
 
 interface NavigationItem {
   name: string;
@@ -20,11 +21,20 @@ interface NavigationItem {
 }
 
 type LayoutProps = {
-    children: React.ReactNode;
-  };
+  children: React.ReactNode;
+};
 
 const navigation: NavigationItem[] = [
   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
+  { name: "Team", href: "#", icon: UsersIcon, current: false },
+  { name: "Projects", href: "#", icon: FolderIcon, current: false },
+  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
+  { name: "Documents", href: "#", icon: InboxIcon, current: false },
+  { name: "Reports", href: "#", icon: ChartBarIcon, current: false },
+];
+
+const authnavigation: NavigationItem[] = [
+  { name: "Dashboard", href: "#", icon: HomeIcon, current: false },
   { name: "Team", href: "#", icon: UsersIcon, current: false },
   { name: "Projects", href: "#", icon: FolderIcon, current: false },
   { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
@@ -41,14 +51,6 @@ export default function MainLayout({ children }: LayoutProps) {
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-100">
-        <body class="h-full">
-        ```
-      */}
       <div>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
@@ -76,7 +78,7 @@ export default function MainLayout({ children }: LayoutProps) {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+              <div className="relative flex-1 flex flex-col max-w-xs w-full bg-black-700">
                 <Transition.Child
                   as={Fragment}
                   enter="ease-in-out duration-300"
@@ -100,60 +102,69 @@ export default function MainLayout({ children }: LayoutProps) {
                     </button>
                   </div>
                 </Transition.Child>
-                <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+                <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto gap-10">
                   <div className="flex-shrink-0 flex items-center px-4">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                      src={Tunebound.src}
                       alt="Workflow"
                     />
                   </div>
-                  <nav className="mt-5 px-2 space-y-1">
-                    {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          item.current
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                          "group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                        )}
-                      >
-                        <item.icon
+                  <nav className="mt-5 px-2 space-y-1 flex flex-col">
+                    <>
+                      {navigation.map((item) => (
+                        <a
+                          key={item.name}
+                          href={item.href}
                           className={classNames(
                             item.current
-                              ? "text-gray-500"
-                              : "text-gray-400 group-hover:text-gray-500",
-                            "mr-4 flex-shrink-0 h-6 w-6"
+                              ? "text-gray-white bg-gray-700 border border-gray-600"
+                              : "text-gray-900 hover:text-white",
+                            "group flex items-center px-3 py-2 text-sm font-normal rounded-md"
                           )}
-                          aria-hidden="true"
-                        />
-                        {item.name}
-                      </a>
-                    ))}
+                        >
+                          <item.icon
+                            className={classNames(
+                              item.current
+                                ? "text-white"
+                                : "text-gray-900 group-hover:text-white",
+                              "mr-3 flex-shrink-0 h-4 w-4"
+                            )}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </a>
+                      ))}
+                    </>
+                    <>
+                      <h2 className="text-xs uppercase text-gray-900 py-4 font-medium">
+                        AUTHENTICATION
+                      </h2>
+                      {authnavigation.map((item) => (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          className={classNames(
+                            item.current
+                              ? " text-white bg-gray-700 border border-gray-600"
+                              : "text-gray-900 hover:text-white",
+                            "group flex items-center px-2 py-2 text-base font-normal rounded-md"
+                          )}
+                        >
+                          <item.icon
+                            className={classNames(
+                              item.current
+                                ? "text-gray-white"
+                                : "text-gray-900 group-hover:text-white",
+                              "mr-4 flex-shrink-0 h-6 w-6"
+                            )}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </a>
+                      ))}
+                    </>
                   </nav>
-                </div>
-                <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-                  <a href="#" className="flex-shrink-0 group block">
-                    <div className="flex items-center">
-                      <div>
-                        <img
-                          className="inline-block h-10 w-10 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          alt=""
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
-                          Tom Cook
-                        </p>
-                        <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
-                          View profile
-                        </p>
-                      </div>
-                    </div>
-                  </a>
                 </div>
               </div>
             </Transition.Child>
@@ -166,66 +177,76 @@ export default function MainLayout({ children }: LayoutProps) {
         {/* Static sidebar for desktop */}
         <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
-            <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+          <div className="flex-1 flex flex-col min-h-0 border-r border-gray-800 bg-black-700">
+            <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto gap-10">
               <div className="flex items-center flex-shrink-0 px-4">
                 <img
                   className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                  src={Tunebound.src}
                   alt="Workflow"
                 />
               </div>
-              <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={classNames(
-                      item.current
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-                    )}
-                  >
-                    <item.icon
+              <nav className="mt-5 flex-1 px-2 bg-transparent space-y-1 flex flex-col">
+                <>
+                  {navigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
                       className={classNames(
                         item.current
-                          ? "text-gray-500"
-                          : "text-gray-400 group-hover:text-gray-500",
-                        "mr-3 flex-shrink-0 h-6 w-6"
+                          ? "text-gray-white bg-gray-700 border border-gray-600"
+                          : "text-gray-900 hover:text-white",
+                        "group flex items-center px-3 py-2 text-sm font-normal rounded-md"
                       )}
-                      aria-hidden="true"
-                    />
-                    {item.name}
-                  </a>
-                ))}
+                    >
+                      <item.icon
+                        className={classNames(
+                          item.current
+                            ? "text-white"
+                            : "text-gray-900 group-hover:text-white",
+                          "mr-3 flex-shrink-0 h-4 w-4"
+                        )}
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </a>
+                  ))}
+                </>
+
+                <>
+                  <h2 className="text-xs uppercase text-gray-900 py-4 font-medium">
+                    AUTHENTICATION
+                  </h2>
+                  {authnavigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className={classNames(
+                        item.current
+                          ? "text-gray-white bg-gray-700 border border-gray-600"
+                          : "text-gray-900 hover:text-white",
+                        "group flex items-center px-3 py-2 text-sm font-normal rounded-md"
+                      )}
+                    >
+                      <item.icon
+                        className={classNames(
+                          item.current
+                            ? "text-white"
+                            : "text-gray-900 group-hover:text-white",
+                          "mr-3 flex-shrink-0 h-4 w-4"
+                        )}
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </a>
+                  ))}
+                </>
               </nav>
-            </div>
-            <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-              <a href="#" className="flex-shrink-0 w-full group block">
-                <div className="flex items-center">
-                  <div>
-                    <img
-                      className="inline-block h-9 w-9 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                      Tom Cook
-                    </p>
-                    <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                      View profile
-                    </p>
-                  </div>
-                </div>
-              </a>
             </div>
           </div>
         </div>
-        <div className="md:pl-64 flex flex-col flex-1">
-          <div className="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-gray-100">
+        <div className="md:pl-64 flex flex-col flex-1 bg-[#161616]">
+          <div className="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 ">
             <button
               type="button"
               className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
