@@ -51,7 +51,7 @@ export default function MainLayout({ children }: LayoutProps) {
 
   return (
     <>
-      <div className="">
+      <div className="text-white">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
