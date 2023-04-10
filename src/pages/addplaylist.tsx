@@ -2,13 +2,106 @@ import axios from "axios";
 import qs from "qs";
 import React, { useEffect, useState } from "react";
 
+type Post = {
+  id: string;
+  title: string;
+  url: string;
+};
+
+type RedditResponse = {
+  data: {
+    after: string;
+    children: {
+      data: Post;
+    }[];
+  };
+};
+
 const AddPlaylist = () => {
   const [token, setToken] = useState("");
   const [playlistId, setPlaylistId] = useState("");
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [after, setAfter] = useState<string | null>(null);
+  const [count, setCount] = useState<number>(0);
+  const limit = 250;
+  const [loading, setLoading] = useState<boolean>(false);
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch(
+        `https://www.reddit.com/r/spotify.json?limit=${limit}&count=${count}&after=${after}`
+      );
+      const json: RedditResponse = await res.json();
+      setPosts((prev) => [
+        ...prev,
+        ...json.data.children
+          .map((child) => child.data)
+          .filter((post) => {
+            return post.url;
+          }),
+      ]);
+      setAfter(json.data.after);
+      setCount((prev) => prev + limit);
+      //setLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleLoadMore = () => {
+    fetchPosts();
+  };
+
+  const addtoDatabase = () => {
+    posts.map(async (post) => {
+      const link = post.url;
+      const pattern = /playlist\/([^?]+)/;
+      const match = link.match(pattern);
+      let playlist_id;
+      if (match) {
+        playlist_id = match[1];
+      }
+      const playlistUrl = `https://api.spotify.com/v1/playlists/${playlist_id}`;
+      const options = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
+      try {
+        const response = await axios.get(playlistUrl, options);
+        if (response.status === 200) {
+          // Parse the playlist data and extract the relevant fields
+          const playlist = response.data;
+          console.log(playlist);
+          // TODO: Save the playlist to the database
+          // TODO: Work on update feature and add link to user's name.
+          const body = {
+            name: playlist.name,
+            description: playlist.description,
+            image: playlist.images[0].url,
+            creator: playlist.owner.display_name,
+            url: playlist.external_urls.spotify,
+            id: playlist.id,
+          };
+
+          await fetch(`/api/playlist/create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          // Clear the playlist ID input field
+          setPlaylistId("");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  };
+
   useEffect(() => {
     // Your client id and client secret
-    const client_id = "8b65773388ab41ae82ee9e3771df2ad8";
-    const client_secret = "292ce2e1155142df89eaa8d83022625a";
+    const client_id = process.env.CLIENT_ID;
+    const client_secret = process.env.SECRET;
 
     const getToken = async () => {
       try {
@@ -99,6 +192,18 @@ const AddPlaylist = () => {
           Add a Spotify Playlist
         </h2>
       </div>
+
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>
+            <a href={post.url} target="_blank" rel="noopener noreferrer">
+              {post.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <button onClick={handleLoadMore}>Load More</button>
+      <button onClick={addtoDatabase}>Add More</button>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
